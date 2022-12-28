@@ -1,0 +1,26 @@
+{
+  "name": "movie-db",
+  "version": "1.0.0",
+  "description": "database for movie db",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js" 
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/azzammahmoud95/Movie-DB.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/azzammahmoud95/Movie-DB/issues"
+  },
+  "homepage": "https://github.com/azzammahmoud95/Movie-DB#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
