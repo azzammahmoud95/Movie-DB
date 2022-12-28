@@ -45,7 +45,7 @@ app.get("/movies/create",(req,res)=>{
 })
 //Read Route
 app.get("/movies/read",(req,res)=>{
-    res.json({status:200,message:movies})
+    res.json({status:200,data:movies})
 })
 // Update Route
 app.get("/movies/update",(req,res)=>{
@@ -70,4 +70,22 @@ app.get("/movies/delete",(req,res)=>{
     res.send("Movie delete")
 })
 // Bonus
+
+// READ/BY
+app.get("/movies/read/by-date",(req,res)=>{
+    res.send({status:200, data:movies.sort((a,b)=>
+        a.year - b.year)}
+    )}
+)
+app.get("/movies/read/by-rating",(req,res)=>{
+    res.send({status:200, data:movies.sort((a,b)=>
+        b.rating - a.rating)}
+    )}
+)
+app.get("/movies/read/by-title",(req,res)=>{
+    res.send({status:200, data:movies.sort((a,b)=>
+        (a.title).localeCompare(b.title))}
+    )}
+)
+
 app.listen(4000);
