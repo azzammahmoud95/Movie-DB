@@ -38,28 +38,8 @@ app.get("/search",(req,res)=>{
         res.json( {status:200, message:"ok", data:req.query.s})
     }
 })
-// Create Route
-app.get("/movies/create",(req,res)=>{
-    res.status(200)
-    res.json({status:200,message:"Movie Created"})
-})
-//Read Route
-app.get("/movies/read",(req,res)=>{
-    res.json({status:200,data:movies})
-})
-// Update Route
-app.get("/movies/update",(req,res)=>{
-    res.send({status:200,message:"Movie updated"})
-})
-// Delete Route
-app.get("/movies/delete",(req,res)=>{
-    res.json({status:200,message:"Movie Deleted"})
-})
-
 // Bonus 
-app.get("/movies/add",(req,res)=>{
-    res.send("Movie added")
-})
+
 app.get("/movies/get",(req,res)=>{
     res.send("Movie get")
 })
@@ -69,24 +49,26 @@ app.get("/movies/edit",(req,res)=>{
 app.get("/movies/delete",(req,res)=>{
     res.send("Movie delete")
 })
-// Bonus
+// ADD A MOVIE
+app.get('/movies/add',(req,res) => {
+    if(req.query.title == "" || req.query.year == "" ||req.query.year == "undefined"||req.query.year.length != 4 ){
+        res.status(403)
+        res.send({status:403, error:true, message:'you cannot create a movie without providing a title and a year'})
 
-// READ/BY
-app.get("/movies/read/by-date",(req,res)=>{
-    res.send({status:200, data:movies.sort((a,b)=>
-        a.year - b.year)}
-    )}
-)
-app.get("/movies/read/by-rating",(req,res)=>{
-    res.send({status:200, data:movies.sort((a,b)=>
-        b.rating - a.rating)}
-    )}
-)
-app.get("/movies/read/by-title",(req,res)=>{
-    res.send({status:200, data:movies.sort((a,b)=>
-        (a.title).localeCompare(b.title))}
-    )}
-)
+    }else if( req.query.rating == ""){
+        movies.push({title:req.query.title, year:req.query.year, rating:4})
+        res.send({status:200, movies})
+    }
+
+    else {
+    movies.push({title:req.query.title, year:req.query.year, rating:req.query.rating})
+    res.send({status:200, movies})}
+
+})
+//Read Route
+app.get("/movies/read",(req,res)=>{
+    res.json({status:200,data:movies})
+})
 
 // READ BY ID
 app.get('/movies/read/id/:ID',(req,res) =>{
@@ -97,5 +79,18 @@ app.get('/movies/read/id/:ID',(req,res) =>{
         res.send({status:404, error:true, message:`the movie ${req.params.ID} does not exist`})
     }
 })
+// Create Route
+app.get("/movies/create",(req,res)=>{
+    res.status(200)
+    res.json({status:200,message:"Movie Created"})
+})
 
+// Update Route
+app.get("/movies/update",(req,res)=>{
+    res.send({status:200,message:"Movie updated"})
+})
+// Delete Route
+app.get("/movies/delete",(req,res)=>{
+    res.json({status:200,message:"Movie Deleted"})
+})
 app.listen(4000);
