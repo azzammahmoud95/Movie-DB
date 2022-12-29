@@ -38,17 +38,6 @@ app.get("/search",(req,res)=>{
         res.json( {status:200, message:"ok", data:req.query.s})
     }
 })
-// Bonus 
-
-app.get("/movies/get",(req,res)=>{
-    res.send("Movie get")
-})
-app.get("/movies/edit",(req,res)=>{
-    res.send("Movie edit")
-})
-app.get("/movies/delete",(req,res)=>{
-    res.send("Movie delete")
-})
 // ADD A MOVIE
 app.get('/movies/add',(req,res) => {
     if(req.query.title == "" || req.query.year == "" ||req.query.year == "undefined"||req.query.year.length != 4 ){
@@ -59,21 +48,28 @@ app.get('/movies/add',(req,res) => {
         movies.push({title:req.query.title, year:req.query.year, rating:4})
         res.send({status:200, movies})
     }
-
     else {
     movies.push({title:req.query.title, year:req.query.year, rating:req.query.rating})
     res.send({status:200, movies})}
 
 })
-//Read Route
-app.get("/movies/read",(req,res)=>{
-    res.json({status:200,data:movies})
-})
+
 
 // READ BY ID
 app.get('/movies/read/id/:ID',(req,res) =>{
     if(0 < req.params.ID && req.params.ID <= movies.length){
         res.send({status:200,data:movies[req.params.ID-1]})
+    }else{
+        res.status(404)
+        res.send({status:404, error:true, message:`the movie ${req.params.ID} does not exist`})
+    }
+})
+
+// Delete Route
+app.get("/movies/delete/:ID",(req,res)=>{
+    if(0 < req.params.ID && req.params.ID <= movies.length){
+        movies.splice(req.params.ID-1,1)
+        res.send({status:200,data:movies})
     }else{
         res.status(404)
         res.send({status:404, error:true, message:`the movie ${req.params.ID} does not exist`})
@@ -89,8 +85,8 @@ app.get("/movies/create",(req,res)=>{
 app.get("/movies/update",(req,res)=>{
     res.send({status:200,message:"Movie updated"})
 })
-// Delete Route
-app.get("/movies/delete",(req,res)=>{
-    res.json({status:200,message:"Movie Deleted"})
+//Read Route
+app.get("/movies/read",(req,res)=>{
+    res.json({status:200,data:movies})
 })
 app.listen(4000);
