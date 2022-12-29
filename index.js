@@ -88,4 +88,14 @@ app.get("/movies/read/by-title",(req,res)=>{
     )}
 )
 
+// READ BY ID
+app.get('/movies/read/id/:ID',(req,res) =>{
+    if(0 < req.params.ID && req.params.ID <= movies.length){
+        res.send({status:200,data:movies[req.params.ID-1]})
+    }else{
+        res.status(404)
+        res.send({status:404, error:true, message:`the movie ${req.params.ID} does not exist`})
+    }
+})
+
 app.listen(4000);
