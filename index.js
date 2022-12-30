@@ -55,16 +55,6 @@ app.get('/movies/add',(req,res) => {
 })
 
 
-// READ BY ID
-app.get('/movies/read/id/:ID',(req,res) =>{
-    if(0 < req.params.ID && req.params.ID <= movies.length){
-        res.send({status:200,data:movies[req.params.ID-1]})
-    }else{
-        res.status(404)
-        res.send({status:404, error:true, message:`the movie ${req.params.ID} does not exist`})
-    }
-})
-
 // Delete Route
 app.get("/movies/delete/:ID",(req,res)=>{
     if(0 < req.params.ID && req.params.ID <= movies.length){
@@ -82,11 +72,53 @@ app.get("/movies/create",(req,res)=>{
 })
 
 // Update Route
-app.get("/movies/update",(req,res)=>{
-    res.send({status:200,message:"Movie updated"})
+app.get("/movies/update/:ID",(req,res)=>{
+     if (req.params.ID >0 && req.params.ID <= movies.length){
+        if(req.query.title){
+            movies[req.params.ID - 1].title = req.query.title
+            res.json({status:200, data:movies})
+        }
+        else if(req.query.rating){
+            movies[req.params.ID -1 ].rating = req.query.rating
+            res.json({status:200, data:movies})
+        }else if(req.query.year && req.query.year.length == 4 ){
+            movies[req.params.ID-1].year = req.query.year
+            res.json({status:200, data:movies})   
+        }
+     } else{
+        res.send({status:404, error:true, message:`the movie ${req.params.ID} does not exist`})
+     }
 })
 //Read Route
 app.get("/movies/read",(req,res)=>{
     res.json({status:200,data:movies})
 })
+
+// READ BY ID
+app.get('/movies/read/id/:ID',(req,res) =>{
+    if(0 < req.params.ID && req.params.ID <= movies.length){
+        res.send({status:200,data:movies[req.params.ID-1]})
+    }else{
+        res.status(404)
+        res.send({status:404, error:true, message:`the movie ${req.params.ID} does not exist`})
+    }
+})
+
+// READ/BY
+app.get("/movies/read/by-date",(req,res)=>{
+    res.send({status:200, data:movies.sort((a,b)=>
+        a.year - b.year)}
+    )}
+)
+app.get("/movies/read/by-rating",(req,res)=>{
+    res.send({status:200, data:movies.sort((a,b)=>
+        b.rating - a.rating)}
+    )}
+)
+app.get("/movies/read/by-title",(req,res)=>{
+    res.send({status:200, data:movies.sort((a,b)=>
+        (a.title).localeCompare(b.title))}
+    )}
+)
+
 app.listen(4000);
