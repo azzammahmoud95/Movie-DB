@@ -1,13 +1,80 @@
 const express = require('express')
 const app = express()
+const mongoose = require('mongoose')
+const bodyParser = require('body-parser');
+mongoose.set('strictQuery', false);
+app.use(bodyParser.json())
 let date = new Date()
 let localTime  = date.toLocaleTimeString()
-
 const movies = [ { title: 'Jaws', year: 1975, rating: 8 },
                  { title: 'Avatar', year: 2009, rating: 7.8 },
                  { title: 'Brazil', year: 1985, rating: 8 },
                  { title: 'الإرهاب والكباب', year: 1992, rating: 6.2 } ]
+                 
+// Connect to DATABASE
+const uri = "mongodb+srv://azzammahmoud95:azzam.am12345@cluster0.iqwwaau.mongodb.net/movieDB?retryWrites=true&w=majority";
+const Schema = mongoose.Schema;
+const movieSchema = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    year: {
+        type: Number,
+        required: true
+    },
+    rating:{
+        type: Number,
+        default:4
+    }
 
+})
+
+// module.exports = mongoose.model('Movie',movieSchema)
+
+
+app.get("/movies/read", async (req, res) => {
+    try {
+      const movie = movies.find();
+      res.json(movie);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+  app.post("/movies/add", async (req,res) => {
+       try {
+        movies.create({
+           title: req.body.title,
+           year: req.body.year,
+           rating:req.body.rating
+
+        })
+    } catch (error) {
+      response.status(500).send(error);
+    }
+  });
+  app.put("/movies/update/:id", async (req, res) =>{
+    try {
+        const movie = await movies.updateOne(
+          { _id: req.params.id },
+          { $set: { title: req.body.title ,year:req.body.year,rating:req.body.rating} }
+        );
+
+        res.send(movie);
+      } catch (err) {
+        res.status(500).send(err);
+      }
+    });
+    app.delete("/movies/delete/:id",(req,res)=>{
+        movies.findByIdAndDelete(req.params.id).then(deletedMovie => {
+            movies.find().then(movies => {
+                res.send({ status: 200, data: movies });
+            })
+        }).catch(err => {
+            res.status(404).send({ status: 404, error: true, message: `the movie '${req.params.id}' does not exist` });
+        })
+    })
+//CONNECT TO DATABASE
 app.get('/',  (req, res) => {
   res.send('ok')
 })
@@ -40,7 +107,7 @@ app.get("/search",(req,res)=>{
 })
 // ADD A MOVIE
 app.post('/movies/add',(req,res) => {
-    if(req.query.title == "" || req.query.year == "" ||req.query.year == "undefined"||req.query.year.length != 4 ){
+    if(req.query.title == "" || req.query.year == "" ||req.query.year == "undefined"||req.query.year.length != 4 || Number(req.query.rating) <=0 ||Number(req.query.rating) > 10  ){
         res.status(403)
         res.send({status:403, error:true, message:'you cannot create a movie without providing a title and a year'})
 
@@ -78,7 +145,7 @@ app.put("/movies/update/:ID",(req,res)=>{
             movies[req.params.ID - 1].title = req.query.title
             res.json({status:200, data:movies})
         }
-        else if(req.query.rating){
+        else if(Number(req.query.rating) >0 && Number(req.query.rating) <= 10 ){
             movies[req.params.ID -1 ].rating = req.query.rating
             res.json({status:200, data:movies})
         }else if(req.query.year && req.query.year.length == 4 ){
@@ -106,17 +173,17 @@ app.get('/movies/read/id/:ID',(req,res) =>{
 
 // READ/BY
 app.get("/movies/read/by-date",(req,res)=>{
-    res.send({status:200, data:movies.sort((a,b)=>
+    res.json({status:200, data:movies.sort((a,b)=>
         a.year - b.year)}
     )}
 )
 app.get("/movies/read/by-rating",(req,res)=>{
-    res.send({status:200, data:movies.sort((a,b)=>
+    res.json({status:200, data:movies.sort((a,b)=>
         b.rating - a.rating)}
     )}
 )
 app.get("/movies/read/by-title",(req,res)=>{
-    res.send({status:200, data:movies.sort((a,b)=>
+    res.json({status:200, data:movies.sort((a,b)=>
         (a.title).localeCompare(b.title))}
     )}
 )
