@@ -39,7 +39,7 @@ app.get("/search",(req,res)=>{
     }
 })
 // ADD A MOVIE
-app.get('/movies/add',(req,res) => {
+app.post('/movies/add',(req,res) => {
     if(req.query.title == "" || req.query.year == "" ||req.query.year == "undefined"||req.query.year.length != 4 ){
         res.status(403)
         res.send({status:403, error:true, message:'you cannot create a movie without providing a title and a year'})
@@ -56,7 +56,7 @@ app.get('/movies/add',(req,res) => {
 
 
 // Delete Route
-app.get("/movies/delete/:ID",(req,res)=>{
+app.delete("/movies/delete/:ID",(req,res)=>{
     if(0 < req.params.ID && req.params.ID <= movies.length){
         movies.splice(req.params.ID-1,1)
         res.send({status:200,data:movies})
@@ -72,7 +72,7 @@ app.get("/movies/create",(req,res)=>{
 })
 
 // Update Route
-app.get("/movies/update/:ID",(req,res)=>{
+app.put("/movies/update/:ID",(req,res)=>{
      if (req.params.ID >0 && req.params.ID <= movies.length){
         if(req.query.title){
             movies[req.params.ID - 1].title = req.query.title
